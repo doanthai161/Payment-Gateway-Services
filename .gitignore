@@ -1,0 +1,105 @@
+# Python / Django / Services #
+
+## Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+## Virtualenvs / env files
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+## Django
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+media/
+staticfiles/
+
+# Logs / Debug outputs #
+
+## Common log files
+*.log
+*.log.*
+logs/
+log/
+*.trace
+
+## Error/output dumps (per your request)
+err.txt
+error.txt
+errors.txt
+*.err
+*.out
+*.dump
+*.stacktrace
+crash-*.log
+
+## Generic runtime artifacts
+*.pid
+*.pid.*
+*.seed
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Test / Coverage / CI #
+
+.pytest_cache/
+.coverage
+.coverage.*
+coverage/
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+junit*.xml
+nosetests.xml
+
+# Type checkers
+
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+.pyright/
+
+# Packaging / build tools
+
+build/
+dist/
+*.egg-info/
+.eggs/
+eggs/
+wheels/
+pip-wheel-metadata/
+
+# IDEs / Editors
+
+.idea/
+.vscode/
+*.code-workspace
+
+# OS / file manager
+
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Optional: local secrets
+
+*.pem
+*.key
+*.p12
+*.pfx
