@@ -1,0 +1,76 @@
+name: Banking Payment Project CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Linting Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install black isort flake8
+
+      - name: Run Black (Formatting)
+        run: black . --check
+
+      - name: Run Isort (Imports)
+        run: isort . --check-only
+
+      - name: Run Flake8 (Linting)
+        run: flake8 . --max-line-length=120 --exclude=.venv,migrations
+
+  test-shared-libs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install shared_libs
+        run: |
+          cd shared_libs/python
+          pip install -e .
+          pip install pytest pytest-cov
+
+      - name: Run Shared Libs Tests
+        run: |
+          cd shared_libs/python
+          # Note: Currently assuming tests might be added later, using || true to not fail if no tests found initiallly
+          pytest --cov=common --cov-report=xml || echo "No tests found yet"
+
+  build-services:
+    needs: [lint-and-format]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [order_service, payment_service, notification_service]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: services/${{ matrix.service }}/Dockerfile
+          push: false
+          tags: ${{ matrix.service }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

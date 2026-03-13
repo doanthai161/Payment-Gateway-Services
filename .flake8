@@ -1,0 +1,5 @@
+[flake8]
+max-line-length = 120
+exclude = .venv, migrations, __pycache__, build, dist
+ignore = E203, W503, D100, D101, D102, D103, D104, D105, D106, D107, D401
+max-complexity = 10
