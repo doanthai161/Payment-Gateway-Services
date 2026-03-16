@@ -22,5 +22,4 @@ django-prometheus==2.3.1
 sentry-sdk==2.0.1
 
 # Shared libs (local editable install)
--e ..\..\shared_libs\python
-
+-e ../../shared_libs/python

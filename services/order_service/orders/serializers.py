@@ -1,11 +1,14 @@
 from rest_framework import serializers
-from .models import Order, OrderItem
+
+from .models import Order
+
 
 class OrderItemWriteSerializer(serializers.Serializer):
     product_id = serializers.UUIDField()
     product_name = serializers.CharField(max_length=255)
     quantity = serializers.IntegerField(min_value=1)
     unit_price = serializers.DecimalField(max_digits=12, decimal_places=2)
+
 
 class CreateOrderSerializer(serializers.Serializer):
     items = OrderItemWriteSerializer(many=True)
@@ -19,10 +22,27 @@ class CreateOrderSerializer(serializers.Serializer):
             raise serializers.ValidationError("Đơn hàng phải có ít nhất một sản phẩm.")
         return value
 
+
 class OrderResponseSerializer(serializers.ModelSerializer):
     items = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = ['id', 'order_code', 'status', 'total_amount', 'final_amount', 
-                  'recipient_name', 'shipping_address', 'created_at']
+        fields = [
+            "id",
+            "order_code",
+            "status",
+            "total_amount",
+            "final_amount",
+            "recipient_name",
+            "shipping_address",
+            "created_at",
+        ]
+
+
+class PaymentStatusUpdateSerializer(serializers.Serializer):
+    order_id = serializers.UUIDField()
+    payment_id = serializers.UUIDField(required=False)
+    reference_id = serializers.CharField(required=False, allow_blank=True)
+    status = serializers.ChoiceField(choices=["pending", "processing", "success", "failed", "canceled", "refunded"])
+    gateway_transaction_id = serializers.CharField(required=False, allow_blank=True, allow_null=True)
