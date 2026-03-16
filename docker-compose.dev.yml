@@ -20,7 +20,7 @@ services:
     environment:
       POSTGRES_DB: payment_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${PAYMENT_DB_PASSWORD:-change-me}
     ports:
       - "5433:5432"
 
@@ -29,7 +29,7 @@ services:
     environment:
       POSTGRES_DB: order_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${ORDER_DB_PASSWORD:-change-me}
     ports:
       - "5434:5432"
 
@@ -46,12 +46,12 @@ services:
       - DB_HOST=payment-db
       - DB_NAME=payment_db
       - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - DB_PASSWORD=${PAYMENT_DB_PASSWORD:-change-me}
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - CELERY_RESULT_BACKEND=redis://redis:6379/1
       - ORDER_SERVICE_URL=http://order-service:8001
-      - INTERNAL_SERVICE_TOKEN=dev-internal-token
-      - VIETQR_WEBHOOK_SECRET=dev-vietqr-secret
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN:-change-me}
+      - VIETQR_WEBHOOK_SECRET=${VIETQR_WEBHOOK_SECRET:-change-me}
     depends_on:
       - payment-db
       - rabbitmq
@@ -69,12 +69,12 @@ services:
       - DB_HOST=payment-db
       - DB_NAME=payment_db
       - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - DB_PASSWORD=${PAYMENT_DB_PASSWORD:-change-me}
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - CELERY_RESULT_BACKEND=redis://redis:6379/1
       - ORDER_SERVICE_URL=http://order-service:8001
-      - INTERNAL_SERVICE_TOKEN=dev-internal-token
-      - VIETQR_WEBHOOK_SECRET=dev-vietqr-secret
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN:-change-me}
+      - VIETQR_WEBHOOK_SECRET=${VIETQR_WEBHOOK_SECRET:-change-me}
     depends_on:
       - payment-service
       - rabbitmq
@@ -93,9 +93,9 @@ services:
       - DB_HOST=order-db
       - DB_NAME=order_db
       - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - DB_PASSWORD=${ORDER_DB_PASSWORD:-change-me}
       - PAYMENT_SERVICE_URL=http://payment-service:8000
-      - INTERNAL_SERVICE_TOKEN=dev-internal-token
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN:-change-me}
     depends_on:
       - order-db
 
