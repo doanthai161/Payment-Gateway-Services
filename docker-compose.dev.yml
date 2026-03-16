@@ -1,0 +1,119 @@
+version: "3.8"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  payment-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+
+  order-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+
+  payment-service:
+    build:
+      context: .
+      file: services/payment_service/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/payment_service:/app/services/payment_service
+      - ./shared_libs/python:/app/shared_libs/python
+    environment:
+      - DB_HOST=payment-db
+      - DB_NAME=payment_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - ORDER_SERVICE_URL=http://order-service:8001
+      - INTERNAL_SERVICE_TOKEN=dev-internal-token
+      - VIETQR_WEBHOOK_SECRET=dev-vietqr-secret
+    depends_on:
+      - payment-db
+      - rabbitmq
+      - redis
+
+  payment-worker:
+    build:
+      context: .
+      file: services/payment_service/Dockerfile
+    command: celery -A core worker -l info
+    volumes:
+      - ./services/payment_service:/app/services/payment_service
+      - ./shared_libs/python:/app/shared_libs/python
+    environment:
+      - DB_HOST=payment-db
+      - DB_NAME=payment_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - ORDER_SERVICE_URL=http://order-service:8001
+      - INTERNAL_SERVICE_TOKEN=dev-internal-token
+      - VIETQR_WEBHOOK_SECRET=dev-vietqr-secret
+    depends_on:
+      - payment-service
+      - rabbitmq
+      - redis
+
+  order-service:
+    build:
+      context: .
+      file: services/order_service/Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./services/order_service:/app/services/order_service
+      - ./shared_libs/python:/app/shared_libs/python
+    environment:
+      - DB_HOST=order-db
+      - DB_NAME=order_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - PAYMENT_SERVICE_URL=http://payment-service:8000
+      - INTERNAL_SERVICE_TOKEN=dev-internal-token
+    depends_on:
+      - order-db
+
+  gateway:
+    build:
+      context: .
+      file: gateway/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - payment-service
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    volumes:
+      - ./infrastructure/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - payment-service
+      - order-service
