@@ -1,5 +1,5 @@
-from django.db import models
 from common.base_models import TimeStampedModel, UUIDModel
+from django.db import models
 
 
 class PaymentGateway(UUIDModel, TimeStampedModel):

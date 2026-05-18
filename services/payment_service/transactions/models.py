@@ -1,6 +1,6 @@
+from common.base_models import TimeStampedModel, UUIDModel
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from common.base_models import TimeStampedModel, UUIDModel
 
 
 class Transaction(UUIDModel, TimeStampedModel):
