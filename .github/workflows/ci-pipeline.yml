@@ -30,7 +30,7 @@ jobs:
         run: isort . --check-only
 
       - name: Run Flake8 (Linting)
-        run: flake8 . --max-line-length=120 --exclude=.venv,migrations
+        run: flake8 .
 
   test-shared-libs:
     runs-on: ubuntu-latest
@@ -50,11 +50,10 @@ jobs:
       - name: Run Shared Libs Tests
         run: |
           cd shared_libs/python
-          # Note: Currently assuming tests might be added later, using || true to not fail if no tests found initiallly
-          pytest --cov=common --cov-report=xml || echo "No tests found yet"
+          pytest --cov=common --cov-report=xml || true
 
   build-services:
-    needs: [lint-and-format]
+    needs: [lint-and-format, test-shared-libs]
     runs-on: ubuntu-latest
     strategy:
       matrix:
