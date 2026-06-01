@@ -9,6 +9,8 @@ on:
 jobs:
   lint-and-format:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
@@ -34,8 +36,11 @@ jobs:
 
   test-shared-libs:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -50,11 +55,13 @@ jobs:
       - name: Run Shared Libs Tests
         run: |
           cd shared_libs/python
-          pytest --cov=common --cov-report=xml; code=$?; [ $code -eq 0 ] || [ $code -eq 5 ]
+          pytest --cov=common --cov-report=xml || [ $? -eq 5 ]
 
   build-services:
     needs: [lint-and-format, test-shared-libs]
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     strategy:
       matrix:
         service: [order_service, payment_service, notification_service]

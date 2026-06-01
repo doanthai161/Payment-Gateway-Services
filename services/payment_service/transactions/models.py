@@ -53,7 +53,10 @@ class Transaction(UUIDModel, TimeStampedModel):
         ]
         # Đảm bảo 1 order chỉ có tối đa 1 giao dịch thành công
         # constraints = [
-        #     models.UniqueConstraint(fields=['order_id'], condition=models.Q(status='success'), name='transactions_unique_successful_txn')
+        #     models.UniqueConstraint(
+        #         fields=['order_id'], condition=models.Q(status='success'),
+        #         name='transactions_unique_successful_txn'
+        #     )
         # ]
 
     def __str__(self):
