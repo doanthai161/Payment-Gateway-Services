@@ -30,4 +30,4 @@ WORKDIR /app/services/notification_service
 
 EXPOSE 8002
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8002"]
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8002", "--workers", "2", "--timeout", "60"]

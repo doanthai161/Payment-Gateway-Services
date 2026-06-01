@@ -1,0 +1,48 @@
+# Version control
+.git
+.gitignore
+
+# Python virtual environments
+.venv
+venv
+env
+
+# Python cache
+__pycache__
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Environment files (injected at runtime, not baked into image)
+.env
+.env.*
+!.env.example
+
+# Test / coverage
+.pytest_cache
+.coverage
+htmlcov/
+coverage.xml
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Node (gateway nếu có)
+node_modules/
+
+# Docker
+docker-compose*.yml

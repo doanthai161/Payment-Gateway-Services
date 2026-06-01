@@ -24,4 +24,4 @@ WORKDIR /app/services/order_service
 
 EXPOSE 8001
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8001"]
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8001", "--workers", "2", "--timeout", "60"]

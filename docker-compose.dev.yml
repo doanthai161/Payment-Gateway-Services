@@ -37,12 +37,12 @@ services:
     build:
       context: .
       file: services/payment_service/Dockerfile
-    ports:
-      - "8000:8000"
     volumes:
       - ./services/payment_service:/app/services/payment_service
       - ./shared_libs/python:/app/shared_libs/python
     environment:
+      - SECRET_KEY=${SECRET_KEY:-dev-only-insecure-key-do-not-use-in-production}
+      - DEBUG=True
       - DB_HOST=payment-db
       - DB_NAME=payment_db
       - DB_USER=postgres
@@ -66,6 +66,8 @@ services:
       - ./services/payment_service:/app/services/payment_service
       - ./shared_libs/python:/app/shared_libs/python
     environment:
+      - SECRET_KEY=${SECRET_KEY:-dev-only-insecure-key-do-not-use-in-production}
+      - DEBUG=True
       - DB_HOST=payment-db
       - DB_NAME=payment_db
       - DB_USER=postgres
@@ -84,12 +86,12 @@ services:
     build:
       context: .
       file: services/order_service/Dockerfile
-    ports:
-      - "8001:8001"
     volumes:
       - ./services/order_service:/app/services/order_service
       - ./shared_libs/python:/app/shared_libs/python
     environment:
+      - SECRET_KEY=${SECRET_KEY:-dev-only-insecure-key-do-not-use-in-production}
+      - DEBUG=True
       - DB_HOST=order-db
       - DB_NAME=order_db
       - DB_USER=postgres
